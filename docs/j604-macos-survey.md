@@ -33,7 +33,7 @@ Air (J713) and the 15-inch Air (J715). The device-tree tag is
 | GPU | 10 cores, `gpu,t8132`, `gpu-supports-higher-mA` set |
 | Memory | 16 GB |
 | Display | Internal Liquid Retina XDR, 3024 × 1964 (`AppleCLCD2`/Parade TCON class) |
-| Wi-Fi / Bluetooth | `wlan-pcie,bcm4387` **C2** over PCIe, module `guam` (J713: `garden`, J715: `kos`, both BCM4388) |
+| Wi-Fi / Bluetooth | **BCM4388 C2** (Willamette) over PCIe, module `guam` (J713: `garden`, J715: `kos` — same chip family, different module name). The ADT's `wlan-pcie,bcm4387` compatible is Apple's generic binding, present on the Airs too; the silicon is BCM4388C2 per the live registry and `system_profiler` |
 | Speakers | `sn012776` amplifiers on `i2c3` (0x38 and its speaker1..5), acoustic ID 30 (J713: 4, AID 37; J715: 6, AID 38). The upstream `t8132-j604.dts` counts six |
 | Headphones | `cs42l84` at `i2c1` 0x4b, as on both Airs |
 | USB | `atc-phy0`…`atc-phy3`, `usb-drd0`, `usb-drd1`, `usb-drd3` (three TB4 ports; the Airs have two) |
@@ -107,7 +107,7 @@ CPU-temperature work should carry over unchanged.
 | Item | J713 / J715 | J604 |
 |---|---|---|
 | `compatible` / `model` | `apple,j713` / `apple,j715` | `apple,j604`, "Apple MacBook Pro (14-inch, M4, 2024)" |
-| Wi-Fi and Bluetooth | BCM4388 C2, `brcm,board-type` `apple,garden` / `apple,kos` | **BCM4387 C2**, `module-instance` `guam` — a different radio firmware family, collected by the installer profile |
+| Wi-Fi and Bluetooth | BCM4388 C2, `brcm,board-type` `apple,garden` / `apple,kos` | BCM4388 C2, `brcm,board-type` `apple,guam` — same chip family as the Airs, different module firmware, collected by the installer profile |
 | Trackpad firmware name | `apple/tpmtfw-j713.bin` / `apple/tpmtfw-j715.bin` | `apple/tpmtfw-j604.bin` (to verify against the recovery image's firmware volume) |
 | Speaker amplifiers | 4 (J713) / 6 (J715) `sn012776` | 7 × `sn012776`, acoustic ID 30 — needs its own speaker bring-up; not in the first kit |
 | USB-C ports | 2 (`usb-drd0`, `usb-drd1`) | 3 TB4 ports: `usb-drd0`, `usb-drd1`, **`usb-drd3`** (plus `atc-phy0`…`atc-phy3`) |
