@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
+// Copyright (c) 2026 BloxburgSBS
+/dts-v1/;
+/plugin/;
+
+/*
+ * MacBook Pro 14-inch (M4, 2024) board identity on top of the J713 devicetree
+ * (tools/build-j604-dtb.py, docs/j604-macos-survey.md).
+ *
+ * The J604 uses the T8132 with the same register map as both Airs, and its
+ * ADT wires the MTP (dockchannel-mtp@94B00000, fifo 0x94b14000) and the
+ * apcie@B0000000 radios' complex at the same addresses as the J713
+ * (docs/j604-macos-survey.md). So the SoC nodes and this project's SoC fixes
+ * (NVMe windows, CPU frequency, idle and the boost gate, CPU temperature,
+ * poweroff through the Abbey PMU) carry over unchanged. This overlay changes
+ * only what differs:
+ *
+ * - the board identity, which the board gates read;
+ * - Wi-Fi and Bluetooth use the J604's "guam" radio module firmware
+ *   (BCM4387 C2, not the Airs' BCM4388);
+ * - the trackpad loads its J604 firmware.
+ *
+ * Not handled here (first-kit scope, see the survey):
+ * - the third TB4 controller (usb-drd3 / atc-phy2-3) — the two Air-equivalent
+ *   ports come up first;
+ * - the seven-amp speaker system (acoustic ID 30);
+ * - DCP and the internal XDR panel.
+ *
+ * Every node is named by path, so the overlay needs no base phandle.
+ */
+/ {
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			compatible = "apple,j604", "apple,t8132", "apple,arm-platform";
+			model = "Apple MacBook Pro (14-inch, M4, 2024)";
+		};
+	};
+
+	fragment@1 {
+		target-path = "/soc/pcie@1cb0000000/pci@0,0/wifi@0,0";
+		__overlay__ {
+			brcm,board-type = "apple,guam";
+		};
+	};
+
+	fragment@2 {
+		target-path = "/soc/pcie@1cb0000000/pci@0,0/bluetooth@0,1";
+		__overlay__ {
+			brcm,board-type = "apple,guam";
+		};
+	};
+
+	fragment@3 {
+		target-path = "/soc/fifo@394b14000/input@8000/multi-touch";
+		__overlay__ {
+			firmware-name = "apple/tpmtfw-j604.bin";
+		};
+	};
+};

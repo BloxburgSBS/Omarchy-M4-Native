@@ -1,0 +1,29 @@
+--- a/src/kboot_gpu.c	2026-11-16 00:50:02
++++ b/src/kboot_gpu.c	2026-11-16 00:50:15
+@@ -552,6 +552,26 @@
+         .pwr_calib_b = {0, 0, 24, 40, 52, 63, 73, 83, 88, 100},
+         .max_power_mw = 26250,
+         .core_mask = 0x3bd,
++        .read_core_mask = true,
++    },
++    {
++        /* MacBook Pro 14" (M4). UNVALIDATED FIRST-BRING-UP ROW: the curves
++         * are not yet the values macOS gives this board's GPU firmware (no
++         * GPU-memory observation has been made on a J604); they extend the
++         * J713's shape by the boost group the J713 ladder does not reach,
++         * interpolated so the eleventh group tops the tenth. The limit is the
++         * ADT derivation (top state 1578 MHz @ 1060 mV × 24800 mA, per
++         * docs/j604-macos-survey.md); this board's sgx also sets
++         * gpu-supports-higher-mA, so the loader-side clamp must be re-derived
++         * before this row is trusted. Replace the curves with observed init
++         * data before any sustained load. The core mask is read from the GPU
++         * at boot; 0x3ff is only the fallback for the ten-core part. */
++        .target = "J604",
++        .groups = 11,
++        .pwr_calib_a = {0, 12, 22, 31, 42, 55, 69, 82, 92, 97, 100},
++        .pwr_calib_b = {0, 0, 24, 40, 52, 63, 73, 83, 88, 94, 100},
++        .max_power_mw = 26288,
++        .core_mask = 0x3ff,
+         .read_core_mask = true,
+     },
+ };

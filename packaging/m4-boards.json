@@ -29,8 +29,8 @@
       "soc": "apple,t8132",
       "models": ["Mac16,1"],
       "name": "MacBook Pro (14-inch, M4, 2024)",
-      "support": "refused",
-      "installer": null
+      "support": "testing",
+      "installer": {"stub": "26.5.1", "expert_only": true}
     },
     {
       "target": "J623",

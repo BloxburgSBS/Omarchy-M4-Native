@@ -69,12 +69,17 @@ index c1b5523..66ebba4 100644
 +    # Testing J715 (15-inch M4 Air): the J713's 26.5.1 recovery image and
 +    # kernelcache (BuildManifest 25F80). Installed only from a J715 tester kit.
 +    "j715ap": Device("26.5.1", True, "26.5.1"),
++    # Testing J604 (14-inch M4 MacBook Pro): the same 26.5.1 universal recovery
++    # image (BuildManifest 25F80), which carries the j604ap device tree and the
++    # "guam" radio firmware this board needs. Installed only from a J604
++    # tester kit.
++    "j604ap": Device("26.5.1", True, "26.5.1"),
 +}
 @@ -41,0 +50 @@ IPSW_VERSIONS = [
 +
 @@ -44,0 +54,3 @@ IPSW_VERSIONS = [
 +    # SFR uses RestoreLongVersion, not the macOS ProductVersion.
-+    IPSW("26.5.1", "26.5.1", "0", "25.6.80.0.0,0", True, ["j713ap", "j715ap"],
++    IPSW("26.5.1", "26.5.1", "0", "25.6.80.0.0,0", True, ["j713ap", "j715ap", "j604ap"],
 +         "https://updates.cdn-apple.com/2026SpringFCS/fullrestores/122-88870/E47EBB85-45F2-4E3C-B9E7-6FF7868C2FBA/UniversalMac_26.5.1_25F80_Restore.ipsw"),
 @@ -510 +522 @@ class InstallerMain:
 -        chip_min = split_ver(CHIP_MIN_VER.get(self.sysinfo.chip_id, "0"))

@@ -18,7 +18,7 @@ them like every other unqualified model.
 |---|---|---|---|---|---|
 | J713 | T8132 | Mac16,12 | MacBook Air (13-inch, M4, 2025) | qualified | 26.5.1, expert mode only |
 | J715 | T8132 | Mac16,13 | MacBook Air (15-inch, M4, 2025) | testing | 26.5.1, expert mode only |
-| J604 | T8132 | Mac16,1 | MacBook Pro (14-inch, M4, 2024) | refused | none |
+| J604 | T8132 | Mac16,1 | MacBook Pro (14-inch, M4, 2024) | testing | 26.5.1, expert mode only |
 | J623 | T8132 | Mac16,2 | iMac (24-inch, 2024, Two ports) | refused | none |
 | J624 | T8132 | Mac16,3 | iMac (24-inch, 2024, Four ports) | refused | none |
 | J773g | T8132 | Mac16,10 | Mac mini (M4, 2024) | testing | 26.6.2 |
