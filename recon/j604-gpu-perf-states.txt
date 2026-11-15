@@ -1,0 +1,29 @@
+/* SPDX-License-Identifier: MIT
+ * Derived from a macOS ADT dump of a MacBook Pro 14-inch (M4, 2024)
+ * (J604 / T8132). Machine identifiers removed.
+ *
+ * Units differ by table: the GPU perf-states carry Hz (the loader requires
+ * a whole number of MHz), the CPU voltage-states carry kHz. Voltages are in
+ * the ADT's raw unit; the GPU module treats the same unit as mV.
+ * See j604-gpu-perf-states.json for the same data, machine-readable.
+ */
+
+/* J604 GPU core performance states (perf-states): 16 rows, 11 voltage groups. */
+/* J604 GPU sram performance states (perf-states-sram): same frequencies, flat voltage. */
+/* group  0: volt   125  freq     0.0 ..     0.0 MHz */
+/* group  1: volt   640  freq   338.0 ..   338.0 MHz */
+/* group  2: volt   655  freq   618.0 ..   618.0 MHz */
+/* group  3: volt   680  freq   796.0 ..   796.0 MHz */
+/* group  4: volt   725  freq   928.0 ..   928.0 MHz */
+/* group  5: volt   780  freq   952.0 ..  1056.0 MHz */
+/* group  6: volt   825  freq  1053.0 ..  1170.0 MHz */
+/* group  7: volt   865  freq  1152.0 ..  1278.0 MHz */
+/* group  8: volt   895  freq  1204.0 ..  1338.0 MHz */
+/* group  9: volt   970  freq  1326.0 ..  1470.0 MHz */
+/* group 10: volt  1060  freq  1578.0 ..  1578.0 MHz */
+
+/* Derived: the top state is 1578 MHz at 1060 -> 26288 mW at the 24800 mA clamp. */
+/* The Airs (J713/J715) stop at 1470 MHz in ten groups. */
+
+/* CPU P cluster (voltage-states5-sram): 20 states, 912 .. 4464 MHz, top 1115 raw. */
+/* CPU E cluster (voltage-states1-sram): 8 states, 900 .. 2892 MHz, top 1005 raw. */

@@ -1,0 +1,99 @@
+{
+  "board": "J604 / Mac16,1 / T8132 (MacBook Pro 14-inch, M4, 2024)",
+  "source": "macOS ADT (ioreg -p IODeviceTree -l -w0); machine identifiers removed",
+  "units": {
+    "gpu_perf_states_freq": "Hz",
+    "cpu_voltage_states_freq": "kHz",
+    "volt": "ADT raw unit (the GPU module treats it as mV)"
+  },
+  "gpu": {
+    "compatible": "gpu,t8132",
+    "voltage_groups": [
+      {
+        "index": 0,
+        "volt_raw": 125,
+        "freq_lo_mhz": 0.0,
+        "freq_hi_mhz": 0.0
+      },
+      {
+        "index": 1,
+        "volt_raw": 640,
+        "freq_lo_mhz": 338.0,
+        "freq_hi_mhz": 338.0
+      },
+      {
+        "index": 2,
+        "volt_raw": 655,
+        "freq_lo_mhz": 618.0,
+        "freq_hi_mhz": 618.0
+      },
+      {
+        "index": 3,
+        "volt_raw": 680,
+        "freq_lo_mhz": 796.0,
+        "freq_hi_mhz": 796.0
+      },
+      {
+        "index": 4,
+        "volt_raw": 725,
+        "freq_lo_mhz": 928.0,
+        "freq_hi_mhz": 928.0
+      },
+      {
+        "index": 5,
+        "volt_raw": 780,
+        "freq_lo_mhz": 952.0,
+        "freq_hi_mhz": 1056.0
+      },
+      {
+        "index": 6,
+        "volt_raw": 825,
+        "freq_lo_mhz": 1053.0,
+        "freq_hi_mhz": 1170.0
+      },
+      {
+        "index": 7,
+        "volt_raw": 865,
+        "freq_lo_mhz": 1152.0,
+        "freq_hi_mhz": 1278.0
+      },
+      {
+        "index": 8,
+        "volt_raw": 895,
+        "freq_lo_mhz": 1204.0,
+        "freq_hi_mhz": 1338.0
+      },
+      {
+        "index": 9,
+        "volt_raw": 970,
+        "freq_lo_mhz": 1326.0,
+        "freq_hi_mhz": 1470.0
+      },
+      {
+        "index": 10,
+        "volt_raw": 1060,
+        "freq_lo_mhz": 1578.0,
+        "freq_hi_mhz": 1578.0
+      }
+    ],
+    "group_count": 11,
+    "top_state": {
+      "freq_mhz": 1578.0,
+      "volt_raw": 1060
+    },
+    "derived_max_power_mw_at_24800mA": 26288,
+    "gpu_supports_higher_mA": true
+  },
+  "cpu": {
+    "p_cluster_states": 20,
+    "p_cluster_top": {
+      "freq_mhz": 4464.0,
+      "volt_raw": 1115
+    },
+    "e_cluster_states": 8,
+    "e_cluster_top": {
+      "freq_mhz": 2892.0,
+      "volt_raw": 1005
+    }
+  }
+}

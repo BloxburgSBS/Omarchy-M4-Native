@@ -13,6 +13,8 @@ CLAUDE.md
 recon/*
 !recon/README.md
 !recon/pmgr-j713-generated-from-live-adt.dtsi
+!recon/j604-gpu-perf-states.txt
+!recon/j604-gpu-perf-states.json
 
 # Python bytecode from running the tests and tools locally.
 __pycache__/
