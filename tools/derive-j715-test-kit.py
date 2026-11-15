@@ -84,7 +84,7 @@ GPU_SUMS_OLD = 'f4353ab283977d333ffba02759c4be26fbee0eaa167994e129dae6562fecc598
 GPU_START = '/usr/local/bin/m4-gpu-start'
 GPU_START_OLD = '3caeb53871758d1aed220dd8c7f40e98890cb963a7be6768f12fc226d936c620'
 GPU_START_LINE = (b'grep -zFxq apple,j713 /sys/firmware/devicetree/base/compatible\n',
-                  b'grep -zFxq -e apple,j713 -e apple,j715 /sys/firmware/devicetree/base/compatible\n')
+                  b'grep -zFxq -e apple,j713 -e apple,j715 -e apple,j604 /sys/firmware/devicetree/base/compatible\n')
 PLACEMENT = '/etc/skel/.local/lib/omarchy/m4-session-placement.py'
 PLACEMENT_OLD = '21c8ebb8cd3239dc0bad07bd8aa57e054c0c59c6aae04c59fc7f6a356fb7e642'
 # The live gates keep refusing a testing board, so the kit patches its own copies to

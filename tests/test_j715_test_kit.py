@@ -350,7 +350,7 @@ class Derive(unittest.TestCase):
         for path, source in OWNER_DROPINS.items():
             self.assertEqual(MODULE.ROOT_DROPINS[path], digest(source.read_bytes()), path)
         self.assertEqual(MODULE.GPU_START_LINE[1],
-                         b'grep -zFxq -e apple,j713 -e apple,j715 /sys/firmware/devicetree/base/compatible\n')
+                         b'grep -zFxq -e apple,j713 -e apple,j715 -e apple,j604 /sys/firmware/devicetree/base/compatible\n')
         self.assertEqual(MODULE.FIRMWARE, '26.5.1')
         self.assertEqual(sorted(MODULE.REPLACED_DOCS),
                          ['Install.command', 'KNOWN-LIMITATIONS.md', 'START-HERE.md', 'UPDATES.md'])
