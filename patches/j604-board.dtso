@@ -17,8 +17,10 @@
  *
  * - the board identity, which the board gates read;
  * - Wi-Fi and Bluetooth use the J604's "guam" radio module firmware
- *   (BCM4387 C2, not the Airs' BCM4388);
- * - the trackpad loads its J604 firmware.
+ *   (BCM4388 C2, same Willamette family as the Airs);
+ * - the trackpad loads its J604 firmware;
+ * - mtp_dart remaps streams 1/2/3 onto stream 0, matching t8132-j604.dts for
+ *   the J604's halted stream-0 iBoot MTP handoff.
  *
  * Not handled here (first-kit scope, see the survey):
  * - the third TB4 controller (usb-drd3 / atc-phy2-3) — the two Air-equivalent
@@ -55,6 +57,13 @@
 		target-path = "/soc/fifo@394b14000/input@8000/multi-touch";
 		__overlay__ {
 			firmware-name = "apple/tpmtfw-j604.bin";
+		};
+	};
+
+	fragment@4 {
+		target-path = "/soc/iommu@394800000";
+		__overlay__ {
+			apple,remap-streams = <1 0>, <2 0>, <3 0>;
 		};
 	};
 };

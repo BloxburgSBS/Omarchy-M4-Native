@@ -14,8 +14,9 @@ J604 ([docs/j604-macos-survey.md](../../docs/j604-macos-survey.md)).
 | File | What it does |
 |---|---|
 | `g16-j604.patch` | The kernel GPU module, patched against the **alpha.1** source packet (`omarchy-j713-v0.1.0-alpha.1-gpu-air-source.tar.gz`), not against `develop`. It admits `apple,j604` in `firmware_allowed`, and gives the J604 its own platform gate |
-| `../../patches/j604-board.dtso` | Board overlay on the J713 devicetree: `apple,j604` identity, `apple,guam` radios, `apple/tpmtfw-j604.bin` trackpad |
+| `../../patches/j604-board.dtso` | Board overlay on the J713 devicetree: `apple,j604` identity, `apple,guam` radios, `apple/tpmtfw-j604.bin` trackpad, `mtp_dart` stream-0 remap |
 | `../../tools/build-j604-dtb.py` | Builds the J604 boot devicetree from the pinned J713 base (`j713-usb0.dtb`, sha256 `352bfa74…`) |
+| `../../patches-kernel/j715-input/dockchannel-hid-accept-j715.patch` | Kernel `dockchannel-hid` gate accepting `apple,j715` and `apple,j604` on the T8132 MTP input path |
 | `kboot-j604-develop-tree.patch` | **Not used by this kit.** A J604 row for the `develop` tree's table-based loader. The alpha.1 loader in this kit has no per-board table — see below |
 
 ## The loader needs no change
@@ -76,11 +77,13 @@ Three things, all in `drivers/gpu/drm/asahi/g16.rs`:
    `kernel-controller.tar.gz` and the GPU source packet. The script rebuilds
    alpha.1 first and requires the shipped module hash `80cf3669…`, so the
    build proves itself before the J604 delta is applied.
-2. **The kernel's dockchannel HID gate** must accept `apple,j604` (the J715
-   kit did this in its kernel patch), and the J604's iBoot leaves the MTP
-   halted on DART stream 0 with `apple,remap-streams = <1 0>, <2 0>, <3 0>`,
-   unlike the J713's running stream-1 handoff — check that when local input
-   is tested.
+2. **Rebuild the kernel with the updated dockchannel HID gate**:
+   `patches-kernel/j715-input/dockchannel-hid-accept-j715.patch` now admits
+   `apple,j604`, and `patches/j604-board.dtso` sets
+   `apple,remap-streams = <1 0>, <2 0>, <3 0>` on `mtp_dart`
+   (`/soc/iommu@394800000`) for the J604's halted stream-0 iBoot handoff —
+   build `boot/Image.gz` with `tools/build-j715-kernel.sh` so the shipped
+   kernel carries the updated gate.
 3. **The installer profile**: the `j604ap` entry is in
    `patches/installer/j713-recovery-radio-profile.patch`, with the BCM4388 C2
    "guam" Wi-Fi and Bluetooth mappings.

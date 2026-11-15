@@ -6,6 +6,7 @@
 import argparse
 import importlib.util
 from pathlib import Path
+import struct
 import subprocess
 import tempfile
 
@@ -24,6 +25,8 @@ J604_MODEL = b'Apple MacBook Pro (14-inch, M4, 2024)\0'
 PORT0 = '/soc/pcie@1cb0000000/pci@0,0'
 RADIOS = (PORT0 + '/wifi@0,0', PORT0 + '/bluetooth@0,1')
 TRACKPAD = '/soc/fifo@394b14000/input@8000/multi-touch'
+MTP_DART = '/soc/iommu@394800000'
+MTP_DART_REMAP = struct.pack('>6I', 1, 0, 2, 0, 3, 0)
 
 
 def expected_nodes(old):
@@ -33,6 +36,7 @@ def expected_nodes(old):
     for radio in RADIOS:
         expected[radio]['brcm,board-type'] = b'apple,guam\0'
     expected[TRACKPAD]['firmware-name'] = b'apple/tpmtfw-j604.bin\0'
+    expected[MTP_DART]['apple,remap-streams'] = MTP_DART_REMAP
     return expected
 
 
@@ -42,6 +46,8 @@ def check_base(old):
             'Unexpected radios')
     require(TRACKPAD in old and old[TRACKPAD].get('firmware-name') == b'apple/tpmtfw-j713.bin\0',
             'Unexpected trackpad firmware')
+    require(MTP_DART in old and 'apple,remap-streams' not in old[MTP_DART],
+            'Unexpected MTP DART stream remap')
 
 
 def build(base, output, overlay, dtc='dtc', fdtoverlay='fdtoverlay'):
@@ -68,6 +74,7 @@ def build(base, output, overlay, dtc='dtc', fdtoverlay='fdtoverlay'):
     return {'base_sha256': sha(original), 'output_sha256': sha(data), 'output_bytes': len(data),
             'overlay_sha256': sha(overlay.read_bytes()), 'board': 'apple,j604',
             'radios': 'apple,guam', 'trackpad_firmware': 'apple/tpmtfw-j604.bin',
+            'mtp_dart_remap_streams': '1->0,2->0,3->0',
             'other_properties_reservations_and_boot_cpu_unchanged': True, 'kernel_changed': False}
 
 

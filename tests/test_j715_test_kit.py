@@ -541,6 +541,7 @@ class Sources(unittest.TestCase):
         text = (ROOT / 'patches-kernel/j715-input/dockchannel-hid-accept-j715.patch').read_text()
         self.assertEqual(re.findall(r'^\+\+\+ b/(\S+)', text, re.M), ['drivers/hid/dockchannel-hid/dockchannel-hid.c'])
         self.assertIn('+', ''.join(line for line in text.splitlines() if 'apple,j715' in line))
+        self.assertIn('+', ''.join(line for line in text.splitlines() if 'apple,j604' in line))
 
 
 class InstallCommand(unittest.TestCase):
