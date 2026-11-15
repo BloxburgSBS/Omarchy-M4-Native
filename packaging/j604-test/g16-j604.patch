@@ -1,5 +1,5 @@
---- a/gpu/j713/asahi/g16.rs
-+++ b/gpu/j713/asahi/g16.rs
+--- a/drivers/gpu/drm/asahi/g16.rs
++++ b/drivers/gpu/drm/asahi/g16.rs
 @@ -15,7 +15,9 @@
          || (probe_only
              && firmware == b"mBoot-18000.120.36\0"
@@ -11,35 +11,7 @@
              && board.split(|&v| v == 0).any(|v| v == b"apple,t8132"))
  }
  
-@@ -50,6 +52,27 @@
-     } else if max_mhz != 1470 {
-         Some("maximum frequency")
-     } else if max_power == 0 || max_power > AIR_MAX_POWER_MW {
-+        Some("maximum power")
-+    } else {
-+        None
-+    }
-+}
-+
-+/// The J604 (MacBook Pro 14-inch, M4) GPU ladder, separate from the Air gate:
-+/// eleven voltage groups topping at 1578 MHz and 1060 mV, whose derived limit
-+/// is 26288 mW at the 24800 mA clamp. The Air gate above stays as it is —
-+/// it pins ten groups at 1470 MHz — so the J604 is judged here instead. The
-+/// ceiling leaves headroom for a higher-mA clamp on units whose loader
-+/// derives one (this board's sgx sets gpu-supports-higher-mA).
-+fn j604_platform_rejection(core_mask: u32, groups: usize, max_mhz: u32, max_power: u32)
-+    -> Option<&'static str> {
-+    if !air_core_mask_allowed(core_mask) {
-+        Some("core mask")
-+    } else if groups != 11 {
-+        Some("performance groups")
-+    } else if max_mhz != 1578 {
-+        Some("maximum frequency")
-+    } else if max_power == 0 || max_power > 27000 {
-         Some("maximum power")
-     } else {
-         None
-@@ -289,10 +312,12 @@
+@@ -259,10 +261,12 @@
  impl Bootstrap {
      pub(crate) fn new(pdev: &platform::Device<Core>) -> Result<Self> {
          let qualification = *crate::module_parameters::air_bootstrap_test.value();
@@ -51,25 +23,36 @@
 +            board_is_j604 = board.split(|&v| v == 0).any(|v| v == b"apple,j604");
              if !air_bootstrap_allowed(&firmware, &board, qualification,
                                       *crate::module_parameters::probe_only.value()) {
-                 dev_err!(pdev.as_ref(), "G16: Air bootstrap refused: firmware-build {} or board not qualified\n",
-@@ -302,8 +327,19 @@
+                 return Err(ENOTSUPP);
+@@ -270,9 +274,28 @@
          }
          validate_boot_resources(pdev, qualification == 1)?;
          let platform = crate::g16_platform::Platform::new(pdev.as_ref())?;
--        if qualification == 1 {
-+        if qualification == 1 && board_is_j604 {
-             let max_mhz = platform.maximum_frequency_mhz();
-+            if let Some(field) = j604_platform_rejection(platform.core_mask, platform.freq_a.len(),
-+                                                         max_mhz, platform.maximum_power) {
+-        if qualification == 1 && (platform.core_mask != 0x3ff || platform.freq_a.len() != 10
+-            || platform.maximum_frequency_mhz() != 1470 || platform.maximum_power != 24800) {
+-            return Err(EINVAL);
++        if qualification == 1 {
++            let (core_ok, want_groups, want_mhz, power_ok) = if board_is_j604 {
++                (platform.core_mask & !0x3ff == 0
++                    && matches!(platform.core_mask.count_ones(), 8 | 10),
++                 11,
++                 1578,
++                 // The loader computes the limit from the ADT ladder and the
++                 // leakage register; with gpu-supports-higher-mA set the clamp
++                 // is 37000 mA, so the derived value spans 32655..39219 mW
++                 // across the leakage range rather than one fixed number.
++                 (32655..=39219).contains(&platform.maximum_power))
++            } else {
++                (platform.core_mask == 0x3ff, 10, 1470, platform.maximum_power == 24800)
++            };
++            if !core_ok || platform.freq_a.len() != want_groups
++                || platform.maximum_frequency_mhz() != want_mhz || !power_ok {
 +                dev_err!(pdev.as_ref(),
-+                         "G16: J604 platform rejected ({}): mask={:#x} groups={} max-frequency={} MHz max-power={} mW\n",
-+                         field, platform.core_mask, platform.freq_a.len(), max_mhz, platform.maximum_power);
++                         "G16: platform rejected: mask={:#x} groups={} max-frequency={} MHz max-power={} mW\n",
++                         platform.core_mask, platform.freq_a.len(),
++                         platform.maximum_frequency_mhz(), platform.maximum_power);
 +                return Err(EINVAL);
 +            }
-+            dev_info!(pdev.as_ref(), "G16: J604 platform accepted; max-power={} mW\n",
-+                      platform.maximum_power);
-+        } else if qualification == 1 {
-+            let max_mhz = platform.maximum_frequency_mhz();
-             if let Some(field) = air_platform_rejection(platform.core_mask, platform.freq_a.len(),
-                                                         max_mhz, platform.maximum_power) {
-                 dev_err!(pdev.as_ref(),
+         }
+         use core::mem::ManuallyDrop;
+         // This bounded qualification build retains transport and mapped memory

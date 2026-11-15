@@ -77,20 +77,31 @@ state 15: 1578     MHz  @ 1060   <- boost state the Airs' table does not reach
 
 Consequences for the port:
 
-- `g16.rs`'s Air gate (`groups == 10`, `max_mhz == 1470`,
-  `max_power <= 24800`) rejects this table on all three platform checks.
-  The J604 admission needs its own gate values: 11 groups, 1578 MHz, and a
-  ceiling that covers the derived ~26.3 W — pending the loader-side clamp
-  (see below).
-- The bootloader's board table
-  (`GravityLinux/bootloader src/kboot_gpu.c t8132_gpu_boards[]`) has entries
-  for `J773g` (11 groups, 37237 mW) and `J713` (10 groups, 26250 mW) only.
-  A J604 entry is required or the loader disables the GPU node outright.
-  The per-step power curves (`pwr_calib_a`/`pwr_calib_b`) are, on both
-  existing boards, values observed from macOS's GPU-firmware init data read
-  out of GPU memory with macOS running — the same observation has not been
-  made on a J604 yet, so an initial entry must either reuse a curve shape
-  (documented as unvalidated) or wait for that dump.
+- `g16.rs`'s Air gate (`groups == 10`, `max_mhz == 1470`, and, in alpha.1,
+  `max_power == 24800` exactly) rejects this table. The J604 needs its own
+  gate values: 11 groups, 1578 MHz, and a power *range* rather than one
+  number — see below.
+- **The alpha.1 loader needs no change for this board.** It has no
+  per-board calibration table: it computes the power model from the ADT
+  ladder, the leakage register at `0x3882c81dc`, the core count read from
+  the GPU, and the `gpu-supports-higher-mA` selector
+  (`m1n1/src/m4_power.h`, `float maximum = higher_ma ? 37000.0f :
+  24800.0f;`). It already accepts an eleven-group ladder
+  (`if (groups != 10 && groups != 11) bail(...)`), and this board sets
+  `gpu-supports-higher-mA`, so the J604's own limit is emitted without a
+  patch. Running that model over this ladder gives a derived limit of
+  **32 655 mW** at the lowest plausible leakage and **39 219 mW** at the
+  37 000 mA clamp, so the module's gate takes 32 655 … 39 219 mW. (The Air's
+  derived value is 24 800 mW for *every* leakage value, because its 24 800 mA
+  clamp always binds — which is why alpha.1 could compare the Air's power
+  exactly.)
+- The relative power table the loader emits for the J604 is therefore
+  computed, not observed: `[0, 7, 13, 19, 25, 33, 42, 51, 58, 76, 100]` at
+  leakage 512. No macOS GPU-memory observation is needed for this board.
+- The `develop` tree's loader (`GravityLinux/bootloader src/kboot_gpu.c`)
+  *does* carry per-board tables (`J773g`: 11 groups, 37237 mW; `J713`: 10
+  groups, 26250 mW) and would need a J604 row with observed curves — but
+  that is a different loader from the one the alpha.1 kit ships.
 - The GPU ID check (`0x0a021100`, revision B1) should match, since the chip
   revision equals the Airs'.
 
