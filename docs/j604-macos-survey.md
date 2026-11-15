@@ -34,7 +34,7 @@ Air (J713) and the 15-inch Air (J715). The device-tree tag is
 | Memory | 16 GB |
 | Display | Internal Liquid Retina XDR, 3024 × 1964 (`AppleCLCD2`/Parade TCON class) |
 | Wi-Fi / Bluetooth | `wlan-pcie,bcm4387` **C2** over PCIe, module `guam` (J713: `garden`, J715: `kos`, both BCM4388) |
-| Speakers | Seven `sn012776` amplifiers, acoustic ID 30 (J713: 4, AID 37; J715: 6, AID 38) |
+| Speakers | `sn012776` amplifiers on `i2c3` (0x38 and its speaker1..5), acoustic ID 30 (J713: 4, AID 37; J715: 6, AID 38). The upstream `t8132-j604.dts` counts six |
 | Headphones | `cs42l84` at `i2c1` 0x4b, as on both Airs |
 | USB | `atc-phy0`…`atc-phy3`, `usb-drd0`, `usb-drd1`, `usb-drd3` (three TB4 ports; the Airs have two) |
 | DCP | `dcp` node present; `DCPEXT0`/`DCPEXT1` with 14 endpoints, `AppleT8132DPTXPort`, `AppleT8132DisplayCrossbar` instantiated |
